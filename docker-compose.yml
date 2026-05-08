@@ -1,0 +1,34 @@
+services:
+  mariadb:
+    image: mariadb:10.11
+    container_name: chwigo-mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD: root1234
+      MARIADB_DATABASE: chwigo
+      MARIADB_USER: chwigo
+      MARIADB_PASSWORD: chwigo1234
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: chwigo-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/chwigo?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul
+      SPRING_DATASOURCE_USERNAME: chwigo
+      SPRING_DATASOURCE_PASSWORD: chwigo1234
+
+volumes:
+  mariadb_data:
