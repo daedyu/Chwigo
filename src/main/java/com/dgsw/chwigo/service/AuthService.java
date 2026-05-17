@@ -61,6 +61,7 @@ public class AuthService {
                 .orElseThrow(() -> CustomException.unauthorized("리프레시 토큰이 만료되었습니다."));
         String newAccessToken = jwtProvider.generateAccessToken(user.getEmail());
         String newRefreshToken = jwtProvider.generateRefreshToken(user.getEmail());
+        user.updateRefreshToken(newRefreshToken);
         return new TokenResponse(newAccessToken, newRefreshToken);
     }
 
