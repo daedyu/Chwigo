@@ -7,6 +7,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -37,6 +38,13 @@ public class GlobalExceptionHandler {
         body.put("errors", errors);
         body.put("timestamp", LocalDateTime.now());
         return ResponseEntity.badRequest().body(body);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
+        String msg = "잘못된 요청 파라미터: " + e.getName() + " = " + e.getValue();
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponse(400, msg, LocalDateTime.now()));
     }
 
     @ExceptionHandler(Exception.class)
