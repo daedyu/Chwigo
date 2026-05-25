@@ -5,6 +5,8 @@ import com.dgsw.chwigo.domain.entity.PostItem;
 import com.dgsw.chwigo.domain.entity.User;
 import com.dgsw.chwigo.domain.enums.Category;
 import com.dgsw.chwigo.domain.enums.PostStatus;
+import com.dgsw.chwigo.domain.enums.ParticipationStatus;
+import com.dgsw.chwigo.domain.repository.ParticipationRepository;
 import com.dgsw.chwigo.domain.repository.PostItemRepository;
 import com.dgsw.chwigo.domain.repository.PostRepository;
 import com.dgsw.chwigo.domain.repository.UserRepository;
@@ -27,6 +29,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final PostItemRepository postItemRepository;
+    private final ParticipationRepository participationRepository;
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
@@ -70,6 +73,9 @@ public class PostService {
         if (post.getStatus() == PostStatus.CLOSED) {
             throw CustomException.badRequest("마감된 게시글은 수정할 수 없습니다.");
         }
+        if (participationRepository.existsByPostAndStatusNot(post, ParticipationStatus.REJECTED)) {
+            throw CustomException.badRequest("참여 신청이 진행 중인 게시글은 품목을 수정할 수 없습니다.");
+        }
         post.update(request.title(), request.description(), request.category(),
                 request.meetLocation(), request.deadline());
 
@@ -83,6 +89,7 @@ public class PostService {
     public void deletePost(Long id, String email) {
         Post post = findPost(id);
         validateAuthor(post, email);
+        participationRepository.deleteByPost(post);
         postRepository.delete(post);
     }
 
