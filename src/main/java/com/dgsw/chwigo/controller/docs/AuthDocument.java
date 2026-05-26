@@ -20,7 +20,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "Auth", description = "인증 API (회원가입, 로그인, 토큰 갱신, 로그아웃, 프로필)")
-public interface ㅇAuthDocument {
+public interface AuthDocument {
 
     @Operation(summary = "회원가입", description = "이메일, 비밀번호, 닉네임으로 신규 계정을 생성합니다.")
     @ApiResponses({
