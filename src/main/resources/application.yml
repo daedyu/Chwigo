@@ -21,8 +21,8 @@ spring:
 
 jwt:
   secret: chwigo-jwt-secret-key-must-be-at-least-256-bits-long-for-hs256-algorithm
-  access-token-expiration: 1800000    # 30분
-  refresh-token-expiration: 604800000 # 7일
+  access-token-expiration: 1800000
+  refresh-token-expiration: 604800000
 
 server:
   port: 8080
